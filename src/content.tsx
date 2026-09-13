@@ -1,12 +1,28 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import FloatingButton from "./components/FloatingButton";
+import buttoncss from "./css/FloatingButton.module.css?inline";
 
 console.log("C.AI Extra loaded!");
 
+function addStyles(shadowRoot: ShadowRoot, ...styles: string[]) {
+  for (const css of styles) {
+    const style = document.createElement("style");
+    style.textContent = css;
+    shadowRoot.appendChild(style);
+  }
+}
+
+const host = document.createElement("div");
+document.body.appendChild(host);
+
+const shadowRoot = host.attachShadow({ mode: "open" });
+
 const container = document.createElement("div");
 
-document.body.appendChild(container);
+shadowRoot.appendChild(container);
+
+addStyles(shadowRoot, buttoncss);
 
 const root = createRoot(container);
 
