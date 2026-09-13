@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "C.AI Extra",
+  "version": "0.1.0",
+  "description": "Extra tools for Character.AI",
+  "permissions": [
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://character.ai/*",
+        "https://*.character.ai/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
+}
