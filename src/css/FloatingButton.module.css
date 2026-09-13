@@ -1,9 +1,8 @@
 .button {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
     border: none;
     border-radius: 50%;
+    padding: 0px;
 
     height: 50px;
     width: 50px;
