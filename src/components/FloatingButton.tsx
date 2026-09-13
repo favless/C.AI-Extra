@@ -3,6 +3,9 @@ import { useState, useEffect, useRef } from "react";
 
 export default function FloatingButton() {
   const [dragging, setDragging] = useState(false);
+  const dragTimer = useRef<number | null>(null);
+  const didDrag = useRef(false);
+
   const [position, setPosition] = useState({
     x: 20,
     y: 20,
@@ -29,6 +32,23 @@ export default function FloatingButton() {
   }, []);
 
   useEffect(() => {
+    const handleMouseUp = () => {
+      if (dragTimer.current !== null) {
+        clearTimeout(dragTimer.current);
+        dragTimer.current = null;
+      }
+
+      setDragging(false);
+    };
+
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  });
+
+  useEffect(() => {
     if (!dragging) {
       return;
     }
@@ -40,16 +60,10 @@ export default function FloatingButton() {
       });
     };
 
-    const handleMouseUp = () => {
-      setDragging(false);
-    };
-
     document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [dragging]);
 
@@ -58,14 +72,22 @@ export default function FloatingButton() {
       className={style.button}
       style={{ left: position.x, top: position.y }}
       onMouseDown={(event) => {
-        setDragging(true);
+        didDrag.current = false;
+        dragTimer.current = window.setTimeout(() => {
+          didDrag.current = true;
+          setDragging(true);
 
-        dragOffset.current = {
-          x: event.clientX - position.x,
-          y: event.clientY - position.y,
-        };
+          dragOffset.current = {
+            x: event.clientX - position.x,
+            y: event.clientY - position.y,
+          };
+        }, 350);
       }}
-      onMouseUp={() => setDragging(false)}
+      onClick={() => {
+        if (!didDrag.current) {
+          console.log("menu opened");
+        }
+      }}
     >
       🛠
     </button>
