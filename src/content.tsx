@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import FloatingButton from "./components/FloatingButton";
 import buttoncss from "./css/FloatingButton.module.css?inline";
+import menucss from "./css/Menu.module.css?inline";
 
 console.log("C.AI Extra loaded!");
 
@@ -22,7 +23,8 @@ const container = document.createElement("div");
 
 shadowRoot.appendChild(container);
 
-addStyles(shadowRoot, buttoncss);
+// CSS GOES HERE
+addStyles(shadowRoot, buttoncss, menucss);
 
 const root = createRoot(container);
 

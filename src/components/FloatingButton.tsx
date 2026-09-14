@@ -1,10 +1,12 @@
 import style from "../css/FloatingButton.module.css";
 import { useState, useEffect, useRef } from "react";
+import Menu from "./Menu";
 
 export default function FloatingButton() {
   const [dragging, setDragging] = useState(false);
   const dragTimer = useRef<number | null>(null);
   const didDrag = useRef(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const [position, setPosition] = useState({
     x: 20,
@@ -68,28 +70,32 @@ export default function FloatingButton() {
   }, [dragging]);
 
   return (
-    <button
-      className={style.button}
-      style={{ left: position.x, top: position.y }}
-      onMouseDown={(event) => {
-        didDrag.current = false;
-        dragTimer.current = window.setTimeout(() => {
-          didDrag.current = true;
-          setDragging(true);
+    <>
+      <button
+        className={style.button}
+        style={{ left: position.x, top: position.y }}
+        onMouseDown={(event) => {
+          didDrag.current = false;
+          dragTimer.current = window.setTimeout(() => {
+            didDrag.current = true;
+            setDragging(true);
 
-          dragOffset.current = {
-            x: event.clientX - position.x,
-            y: event.clientY - position.y,
-          };
-        }, 350);
-      }}
-      onClick={() => {
-        if (!didDrag.current) {
-          console.log("menu opened");
-        }
-      }}
-    >
-      🛠
-    </button>
+            dragOffset.current = {
+              x: event.clientX - position.x,
+              y: event.clientY - position.y,
+            };
+          }, 350);
+        }}
+        onClick={() => {
+          if (!didDrag.current) {
+            setMenuOpen((prev) => !prev);
+            console.log(menuOpen);
+          }
+        }}
+      >
+        🛠
+      </button>
+      {menuOpen ? <Menu setMenuOpen={setMenuOpen} /> : ""}
+    </>
   );
 }
