@@ -4,7 +4,24 @@ import FloatingButton from "./components/FloatingButton";
 import buttoncss from "./css/FloatingButton.module.css?inline";
 import menucss from "./css/Menu.module.css?inline";
 
+import { getCurrentCharacter, replaceCharacterImages } from "./utils/character";
+
 console.log("C.AI Extra loaded!");
+
+async function test() {
+  const character = await getCurrentCharacter();
+
+  console.log("character fetched:");
+  console.log(character);
+
+  if (!character) {
+    return;
+  }
+
+  replaceCharacterImages(character.name);
+}
+
+test();
 
 function addStyles(shadowRoot: ShadowRoot, ...styles: string[]) {
   for (const css of styles) {
