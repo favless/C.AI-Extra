@@ -24,3 +24,28 @@
     padding: 16px;
     box-sizing: border-box;
 }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.header h2 {
+    margin: 0px;
+}
+
+.close {
+    width: 30px;
+    height: 30px;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+}
+
+.list button {
+    width: 100%;
+    height: 50px;
+}
