@@ -1,3 +1,10 @@
+import { loadAllCharacters } from "./database";
+import type { CharacterData } from "../types/CharacterData";
+
+type CharacterImage = CharacterData & {
+  imageURL: string;
+};
+
 function waitForCharacterLink(): Promise<HTMLAnchorElement> {
   return new Promise((resolve) => {
     const findCharacterLink = () => {
@@ -8,7 +15,7 @@ function waitForCharacterLink(): Promise<HTMLAnchorElement> {
       }
 
       return chatDetails.querySelector<HTMLAnchorElement>(
-        'a[href^="/character/"]'
+        'a[href^="/character/"]',
       );
     };
 
@@ -38,40 +45,84 @@ function waitForCharacterLink(): Promise<HTMLAnchorElement> {
 export async function getCurrentCharacter() {
   const characterLink = await waitForCharacterLink();
 
-  const characterImage =
-    characterLink.querySelector<HTMLImageElement>("img");
+  const characterImage = characterLink.querySelector<HTMLImageElement>("img");
 
   if (!characterImage) {
     return null;
   }
 
+  const href = characterLink.getAttribute("href");
+
+  if (!href) {
+    return null;
+  }
+
   return {
-    href: characterLink.getAttribute("href"),
+    href,
     name: characterImage.alt,
   };
 }
 
-export function replaceCharacterImages(name: string) {
-  const replaceImages = () => {
-    const images = document.querySelectorAll<HTMLImageElement>("img");
+function replaceImages() {
+  const images = document.querySelectorAll<HTMLImageElement>("img");
 
-    images.forEach((img) => {
-      if (img.alt === name || img.title === name) {
-        img.src = "https://placehold.co/128x128/ff0000/ffffff?text=REPLACED";
+  images.forEach((img) => {
+    characterImages.forEach((char) => {
+      if (img.alt === char.name || img.title === char.name) {
+        img.src = char.imageURL;
       }
     });
-  };
+  });
+}
 
-  // Replace images that already exist
-  replaceImages();
+let characterImages: CharacterImage[] = [];
 
-  // Watch for new images being added
-  const observer = new MutationObserver(() => {
+let imageObserver: MutationObserver | null = null;
+
+export async function startImageReplacement() {
+  if (imageObserver) {
+    return;
+  }
+
+  await reloadImageReplacements();
+
+  imageObserver = new MutationObserver(() => {
     replaceImages();
   });
 
-  observer.observe(document.body, {
+  imageObserver.observe(document.body, {
     childList: true,
     subtree: true,
   });
+}
+
+export function stopImageReplacement() {
+  imageObserver?.disconnect();
+  imageObserver = null;
+
+  for (const character of characterImages) {
+    URL.revokeObjectURL(character.imageURL);
+  }
+
+  characterImages = [];
+}
+
+export async function reloadImageReplacements() {
+  for (const character of characterImages) {
+    URL.revokeObjectURL(character.imageURL);
+  }
+
+  const characters = await loadAllCharacters();
+
+  characterImages = characters.map((char) => {
+    const image =
+      char.activeImage !== null ? char.images[char.activeImage] : null;
+
+    return {
+      ...char,
+      imageURL: image ? URL.createObjectURL(image) : "",
+    };
+  });
+
+  replaceImages();
 }

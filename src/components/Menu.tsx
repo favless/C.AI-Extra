@@ -2,12 +2,57 @@ import React from "react";
 import style from "../css/Menu.module.css";
 import { useState } from "react";
 
+import { useEffect } from "react";
+import {
+  getCurrentCharacter,
+  reloadImageReplacements,
+} from "../utils/character";
+import { saveCharacter } from "../utils/database";
+
 type menuProps = {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function Menu(props: menuProps) {
   const [tab, setTab] = useState(0);
+
+  const [character, setCharacter] = useState<{
+    href: string;
+    name: string;
+  } | null>(null);
+
+  useEffect(() => {
+    getCurrentCharacter().then((character) => {
+      setCharacter(character);
+    });
+  }, []);
+
+  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file || !character) {
+      return;
+    }
+
+    await saveCharacter({
+      href: character.href,
+      name: character.name,
+      image: file,
+    });
+
+    reloadImageReplacements();
+
+    console.log("Image saved!");
+  }
+
+  function ToolHeader() {
+    return (
+      <div className={style.header}>
+        <button onClick={() => setTab(0)}> &gt; Back</button>
+        <span>{`Character: ${character?.name ?? "None"}`}</span>
+      </div>
+    );
+  }
 
   // tab 0
   function ToolList() {
@@ -24,12 +69,14 @@ export default function Menu(props: menuProps) {
   function ImageReplacer() {
     return (
       <div>
-        <div className={style.header}>
-          <button onClick={() => setTab(0)}> &gt; Back</button>
-          <span>{`Character: ${null}`}</span>
-        </div>
+        <ToolHeader />
         <span>Upload:</span>
-        <input type="file" id="imgupload" />
+        <input
+          type="file"
+          id="imgupload"
+          accept="image/*"
+          onChange={handleImageUpload}
+        />
       </div>
     );
   }
