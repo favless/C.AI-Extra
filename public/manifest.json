@@ -3,9 +3,7 @@
   "name": "C.AI Extra",
   "version": "0.1.0",
   "description": "Extra tools for Character.AI",
-  "permissions": [
-    "storage"
-  ],
+  "permissions": [],
   "content_scripts": [
     {
       "matches": [

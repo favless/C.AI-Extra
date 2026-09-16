@@ -2,7 +2,7 @@ import { loadAllCharacters } from "./database";
 import type { CharacterData } from "../types/CharacterData";
 
 type CharacterImage = CharacterData & {
-  imageURL: string;
+  imageURL: string | null;
 };
 
 function waitForCharacterLink(): Promise<HTMLAnchorElement> {
@@ -68,7 +68,7 @@ function replaceImages() {
 
   images.forEach((img) => {
     characterImages.forEach((char) => {
-      if (img.alt === char.name || img.title === char.name) {
+      if ((img.alt === char.name || img.title === char.name) && char.imageURL) {
         img.src = char.imageURL;
       }
     });
@@ -101,7 +101,9 @@ export function stopImageReplacement() {
   imageObserver = null;
 
   for (const character of characterImages) {
-    URL.revokeObjectURL(character.imageURL);
+    if (character.imageURL) {
+      URL.revokeObjectURL(character.imageURL);
+    }
   }
 
   characterImages = [];
@@ -109,18 +111,19 @@ export function stopImageReplacement() {
 
 export async function reloadImageReplacements() {
   for (const character of characterImages) {
-    URL.revokeObjectURL(character.imageURL);
+    if (character.imageURL) {
+      URL.revokeObjectURL(character.imageURL);
+    }
   }
 
   const characters = await loadAllCharacters();
 
   characterImages = characters.map((char) => {
-    const image =
-      char.activeImage !== null ? char.images[char.activeImage] : null;
+    const image = char.images[char.activeImage];
 
     return {
       ...char,
-      imageURL: image ? URL.createObjectURL(image) : "",
+      imageURL: image ? URL.createObjectURL(image) : null,
     };
   });
 

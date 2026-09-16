@@ -1,6 +1,7 @@
 import style from "../css/FloatingButton.module.css";
 import { useState, useEffect, useRef } from "react";
 import Menu from "./Menu";
+import Icon from "./tools/Icon";
 
 export default function FloatingButton() {
   const [dragging, setDragging] = useState(false);
@@ -33,7 +34,7 @@ export default function FloatingButton() {
     };
   }, []);
 
-  useEffect(() => {
+  (useEffect(() => {
     const handleMouseUp = () => {
       if (dragTimer.current !== null) {
         clearTimeout(dragTimer.current);
@@ -48,7 +49,8 @@ export default function FloatingButton() {
     return () => {
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  });
+  }),
+    []);
 
   useEffect(() => {
     if (!dragging) {
@@ -89,11 +91,10 @@ export default function FloatingButton() {
         onClick={() => {
           if (!didDrag.current) {
             setMenuOpen((prev) => !prev);
-            console.log(menuOpen);
           }
         }}
       >
-        🛠
+        <Icon type="settings" />
       </button>
       {menuOpen ? <Menu setMenuOpen={setMenuOpen} /> : ""}
     </>

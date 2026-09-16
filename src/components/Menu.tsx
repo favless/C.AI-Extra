@@ -34,10 +34,12 @@ export default function Menu(props: menuProps) {
       return;
     }
 
+    //TODO change this later to take activeImage from selected and properly handle the img array
     await saveCharacter({
       href: character.href,
       name: character.name,
-      image: file,
+      images: [file],
+      activeImage: 0,
     });
 
     reloadImageReplacements();
