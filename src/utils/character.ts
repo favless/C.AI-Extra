@@ -1,5 +1,5 @@
 import { loadAllCharacters } from "./database";
-import type { CharacterData } from "../types/CharacterData";
+import type { CharacterData } from "../types/CharacterTypes";
 
 type CharacterImage = CharacterData & {
   imageURL: string | null;

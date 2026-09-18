@@ -4,3 +4,8 @@ export type CharacterData = {
   images: (Blob | null)[];
   activeImage: number;
 };
+
+export type CurrentCharacter = {
+  href: string;
+  name: string;
+};

@@ -1,0 +1,35 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-items: flex-start;
+}
+
+.header span {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+}
+
+.header button {
+  background: transparent;
+  border: 2px solid var(--surface-elevation-1);
+  border-radius: 6px;
+  color: var(--foreground);
+
+  padding: 0px 14px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.header button svg {
+  height: 30px;
+  width: 30px;
+}
+
+.header button svg * {
+  stroke: var(--foreground);
+}

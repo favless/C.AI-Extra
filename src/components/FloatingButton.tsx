@@ -1,12 +1,14 @@
 import style from "../css/FloatingButton.module.css";
 import { useState, useEffect, useRef } from "react";
 import Menu from "./Menu";
+import { useSession } from "./context/SessionContext";
 
 export default function FloatingButton() {
+  const { setTab, menuOpen, setMenuOpen } = useSession();
+
   const [dragging, setDragging] = useState(false);
   const dragTimer = useRef<number | null>(null);
   const didDrag = useRef(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const [position, setPosition] = useState({
     x: 20,
@@ -85,11 +87,12 @@ export default function FloatingButton() {
               x: event.clientX - position.x,
               y: event.clientY - position.y,
             };
-          }, 350);
+          }, 200);
         }}
         onClick={() => {
           if (!didDrag.current) {
             setMenuOpen((prev) => !prev);
+            setTab(0);
           }
         }}
       >
@@ -130,7 +133,7 @@ export default function FloatingButton() {
           <path d="M18 6L6.00001 18" stroke="#000000" stroke-linecap="round" />
         </svg>
       </button>
-      {menuOpen ? <Menu setMenuOpen={setMenuOpen} /> : ""}
+      <Menu />
     </>
   );
 }

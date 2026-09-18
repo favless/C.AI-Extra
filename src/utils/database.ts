@@ -2,7 +2,7 @@ const DB_NAME = "cai-extra";
 const DB_VERSION = 1;
 const STORE_NAME = "characters";
 
-import type { CharacterData } from "../types/CharacterData";
+import type { CharacterData } from "../types/CharacterTypes";
 
 export function openDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {

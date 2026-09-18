@@ -1,0 +1,16 @@
+.list {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: repeat(1fr, 5);
+  gap: 10px;
+}
+
+.list button {
+  width: 100%;
+  height: 60px;
+
+  background-color: transparent;
+  border: 3px solid var(--surface-elevation-1);
+  border-radius: 8px;
+  cursor: pointer;
+}
