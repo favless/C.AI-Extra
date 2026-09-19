@@ -2,13 +2,14 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import FloatingButton from "./components/FloatingButton";
 import { startImageReplacement } from "./utils/character";
-import { SessionProvider } from "./components/context/SessionContext";
+import { SessionProvider } from "./context/SessionContext";
 
 import buttoncss from "./css/FloatingButton.module.css?inline";
 import menucss from "./css/Menu.module.css?inline";
 import toolheadercss from "./css/sections/ToolHeader.module.css?inline";
 import toollistcss from "./css/sections/ToolList.module.css?inline";
 import globalcss from "./css/Global.module.css?inline";
+import imagereplacercss from "./css/sections/ImageReplacer.module.css?inline";
 
 console.log("C.AI Extra loaded!");
 
@@ -36,6 +37,7 @@ addStyles(
   toolheadercss,
   toollistcss,
   globalcss,
+  imagereplacercss,
 );
 
 const theme = {

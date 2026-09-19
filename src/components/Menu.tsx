@@ -4,7 +4,7 @@ import ToolList from "./tabs/ToolList";
 
 import { useEffect } from "react";
 import { getCurrentCharacter } from "../utils/character";
-import { useSession } from "./context/SessionContext";
+import { useSession } from "./../context/SessionContext";
 
 import ImageReplacer from "./tabs/ImageReplacer";
 

@@ -1,5 +1,5 @@
 import style from "../../css/sections/ToolList.module.css";
-import { useSession } from "../context/SessionContext";
+import { useSession } from "../../context/SessionContext";
 
 export default function ToolList() {
   const { setTab } = useSession();

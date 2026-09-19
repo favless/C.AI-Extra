@@ -1,42 +1,120 @@
-import { useSession } from "../context/SessionContext";
+import { useSession } from "../../context/SessionContext";
 import { saveCharacter } from "../../utils/database";
 import { reloadImageReplacements } from "../../utils/character";
+import { loadCharacter } from "../../utils/database";
+import { useState, useEffect } from "react";
+import type { CharacterData } from "../../types/CharacterTypes";
 
 import ToolHeader from "../sections/ToolHeader";
+import ImageSlot from "../logic/ImageSlot";
+import style from "../../css/sections/ImageReplacer.module.css";
 
 export default function ImageReplacer() {
   const { currentCharacter } = useSession();
+  const [character, setCharacter] = useState<CharacterData | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<number>(0);
+  const [imageURLs, setImageURLs] = useState<(string | null)[]>([
+    null,
+    null,
+    null,
+    null,
+  ]);
 
-  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-
-    if (!file || !currentCharacter) {
+  // HANDLE SELECTED CHARACTER
+  useEffect(() => {
+    if (!currentCharacter) {
+      setCharacter(null);
       return;
     }
 
-    //TODO change this later to take activeImage from selected and properly handle the img array
-    await saveCharacter({
-      href: currentCharacter?.href,
-      name: currentCharacter?.name,
-      images: [file],
-      activeImage: 0,
-    });
+    loadCharacter(currentCharacter.href).then(setCharacter);
+  }, [currentCharacter]);
+
+  // HANDLE IMAGE SLOTS
+  useEffect(() => {
+    const urls = character?.images.map((image) =>
+      image ? URL.createObjectURL(image) : null,
+    ) ?? [null, null, null, null];
+
+    setImageURLs(urls);
+
+    return () => {
+      urls.forEach((url) => {
+        if (url) URL.revokeObjectURL(url);
+      });
+    };
+  }, [character]);
+
+  // SELF EXPLANATORY
+  async function handleImageUpload(
+    event: React.ChangeEvent<HTMLInputElement>,
+    slot: number,
+  ) {
+    if (!currentCharacter) return;
+
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const images = character ? [...character.images] : [null, null, null, null];
+
+    images[slot] = file;
+
+    const newCharacter: CharacterData = {
+      href: currentCharacter.href,
+      name: currentCharacter.name,
+      images,
+      activeImage: character?.activeImage ?? 0,
+    };
+
+    await saveCharacter(newCharacter);
+
+    setCharacter(newCharacter);
 
     reloadImageReplacements();
 
-    console.log("Image saved!");
+    console.log(`Image saved to slot ${slot}!`);
   }
 
   return (
     <div>
       <ToolHeader />
-      <span>Upload:</span>
-      <input
-        type="file"
-        id="imgupload"
-        accept="image/*"
-        onChange={handleImageUpload}
-      />
+      <div className={style["image-container"]}>
+        <div className={style.left}>
+          <ImageSlot
+            character={character}
+            ownSlot={0}
+            handleImageUpload={handleImageUpload}
+            selectedSlot={selectedSlot}
+            setSelectedSlot={setSelectedSlot}
+            imageURLs={imageURLs}
+          />
+          <ImageSlot
+            character={character}
+            ownSlot={1}
+            handleImageUpload={handleImageUpload}
+            selectedSlot={selectedSlot}
+            setSelectedSlot={setSelectedSlot}
+            imageURLs={imageURLs}
+          />
+          <ImageSlot
+            character={character}
+            ownSlot={2}
+            handleImageUpload={handleImageUpload}
+            selectedSlot={selectedSlot}
+            setSelectedSlot={setSelectedSlot}
+            imageURLs={imageURLs}
+          />
+          <ImageSlot
+            character={character}
+            ownSlot={3}
+            handleImageUpload={handleImageUpload}
+            selectedSlot={selectedSlot}
+            setSelectedSlot={setSelectedSlot}
+            imageURLs={imageURLs}
+          />
+        </div>
+        <div className={style.right}></div>
+      </div>
     </div>
   );
 }

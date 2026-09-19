@@ -47,7 +47,7 @@ export async function saveCharacter(character: CharacterData) {
 
 export async function loadCharacter(
   href: string,
-): Promise<CharacterData | undefined> {
+): Promise<CharacterData | null> {
   const db = await openDatabase();
 
   return new Promise((resolve, reject) => {
@@ -57,7 +57,7 @@ export async function loadCharacter(
     const request = store.get(href);
 
     request.onsuccess = () => {
-      resolve(request.result);
+      resolve(request.result ?? null);
     };
 
     request.onerror = () => {

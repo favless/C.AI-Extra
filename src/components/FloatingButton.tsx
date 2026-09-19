@@ -1,7 +1,7 @@
 import style from "../css/FloatingButton.module.css";
 import { useState, useEffect, useRef } from "react";
 import Menu from "./Menu";
-import { useSession } from "./context/SessionContext";
+import { useSession } from "./../context/SessionContext";
 
 export default function FloatingButton() {
   const { setTab, menuOpen, setMenuOpen } = useSession();

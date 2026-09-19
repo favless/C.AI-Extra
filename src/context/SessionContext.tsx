@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import type { CurrentCharacter } from "../../types/CharacterTypes";
+import type { CurrentCharacter } from "../types/CharacterTypes";
 
 type SessionContextType = {
   currentCharacter: CurrentCharacter | null;
