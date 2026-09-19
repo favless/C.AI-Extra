@@ -13,6 +13,7 @@ export default function ImageReplacer() {
   const { currentCharacter } = useSession();
   const [character, setCharacter] = useState<CharacterData | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<number>(0);
+  const [activeSlot, setActiveSlot] = useState<number>(0);
   const [imageURLs, setImageURLs] = useState<(string | null)[]>([
     null,
     null,
@@ -27,7 +28,13 @@ export default function ImageReplacer() {
       return;
     }
 
-    loadCharacter(currentCharacter.href).then(setCharacter);
+    loadCharacter(currentCharacter.href).then((character) => {
+      setCharacter(character);
+
+      if (character) {
+        setActiveSlot(character.activeImage);
+      }
+    });
   }, [currentCharacter]);
 
   // HANDLE IMAGE SLOTS
@@ -44,6 +51,23 @@ export default function ImageReplacer() {
       });
     };
   }, [character]);
+
+  // HANDLE ACTIVE IMAGE CHANGE
+  useEffect(() => {
+    if (!character) return;
+
+    if (character.activeImage === activeSlot) return;
+
+    const newCharacter = {
+      ...character,
+      activeImage: activeSlot,
+    };
+
+    saveCharacter(newCharacter);
+    setCharacter(newCharacter);
+
+    reloadImageReplacements();
+  }, [activeSlot]);
 
   // SELF EXPLANATORY
   async function handleImageUpload(
@@ -63,7 +87,7 @@ export default function ImageReplacer() {
       href: currentCharacter.href,
       name: currentCharacter.name,
       images,
-      activeImage: character?.activeImage ?? 0,
+      activeImage: slot,
     };
 
     await saveCharacter(newCharacter);
@@ -113,8 +137,23 @@ export default function ImageReplacer() {
             imageURLs={imageURLs}
           />
         </div>
-        <div className={style.right}></div>
+        <div className={style.right}>
+          <img
+            src={imageURLs[selectedSlot] ? imageURLs[selectedSlot] : undefined}
+            alt="Selected Image"
+          />
+        </div>
       </div>
+      <button
+        className={`${style.apply} ${selectedSlot == character?.activeImage ? style.cantapply : ""}`}
+        onClick={() => {
+          setActiveSlot(selectedSlot);
+        }}
+      >
+        {selectedSlot == character?.activeImage
+          ? "Selected image is active"
+          : "Use this image"}
+      </button>
     </div>
   );
 }

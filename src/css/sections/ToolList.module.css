@@ -1,7 +1,7 @@
 .list {
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: repeat(1fr, 5);
+  grid-template-rows: repeat(5, 1fr);
   gap: 10px;
 }
 
@@ -13,4 +13,14 @@
   border: 3px solid var(--surface-elevation-1);
   border-radius: 8px;
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  padding: 0px 12px;
+}
+
+.warning {
+  color: var(--muted-foreground);
 }
