@@ -3,6 +3,11 @@ import { useState, useEffect, useRef } from "react";
 import Menu from "./Menu";
 import { useSession } from "./../context/SessionContext";
 
+type ButtonPosition = {
+  x: number;
+  y: number;
+};
+
 export default function FloatingButton() {
   const { setTab, menuOpen, setMenuOpen } = useSession();
 
@@ -14,20 +19,52 @@ export default function FloatingButton() {
     x: 20,
     y: 20,
   });
+  const positionRef = useRef(position);
 
   const dragOffset = useRef({
     x: 0,
     y: 0,
   });
 
+  // SAVE AND LOAD HELPERS
+  function saveButtonPosition(position: ButtonPosition) {
+    localStorage.setItem("floatingButtonPosition", JSON.stringify(position));
+  }
+
+  function loadButtonPosition(): ButtonPosition | null {
+    const saved = localStorage.getItem("floatingButtonPosition");
+
+    if (!saved) return null;
+
+    return JSON.parse(saved);
+  }
+
+  // OTHER HELPERS
+  function clampPosition(position: ButtonPosition): ButtonPosition {
+    return {
+      x: Math.max(0, Math.min(position.x, window.innerWidth - 60)),
+      y: Math.max(0, Math.min(position.y, window.innerHeight - 60)),
+    };
+  }
+
+  function updatePosition(newPosition: ButtonPosition) {
+    setPosition(newPosition);
+    positionRef.current = newPosition;
+  }
+
+  useEffect(() => {
+    const savedPosition = loadButtonPosition();
+
+    if (savedPosition) {
+      updatePosition(clampPosition(savedPosition));
+    }
+  }, []);
+
+  // VIEWPORT RESIZING HANDLER
   useEffect(() => {
     const handleResize = () => {
-      setPosition((currentPosition) => ({
-        x: Math.max(0, Math.min(currentPosition.x, window.innerWidth - 60)),
-        y: Math.max(0, Math.min(currentPosition.y, window.innerHeight - 60)),
-      }));
+      updatePosition(clampPosition(positionRef.current));
     };
-
     window.addEventListener("resize", handleResize);
 
     return () => {
@@ -35,11 +72,20 @@ export default function FloatingButton() {
     };
   }, []);
 
-  (useEffect(() => {
+  // MOUSE UP HANDLER
+  useEffect(() => {
     const handleMouseUp = () => {
       if (dragTimer.current !== null) {
         clearTimeout(dragTimer.current);
         dragTimer.current = null;
+      }
+
+      if (didDrag.current) {
+        saveButtonPosition(positionRef.current);
+        setDragging(false);
+
+        // Don't reset didDrag yet
+        return;
       }
 
       setDragging(false);
@@ -50,19 +96,21 @@ export default function FloatingButton() {
     return () => {
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }),
-    []);
+  }, []);
 
+  // DRAGGING HANDLER
   useEffect(() => {
     if (!dragging) {
       return;
     }
 
     const handleMouseMove = (event: MouseEvent) => {
-      setPosition({
-        x: event.clientX - dragOffset.current.x,
-        y: event.clientY - dragOffset.current.y,
-      });
+      updatePosition(
+        clampPosition({
+          x: event.clientX - dragOffset.current.x,
+          y: event.clientY - dragOffset.current.y,
+        }),
+      );
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -72,6 +120,8 @@ export default function FloatingButton() {
     };
   }, [dragging]);
 
+  // whatever the fuck is going on with the button
+  // https://tenor.com/view/teenage-mutant-ninja-turtles-goggles-gif-7684687393423002481
   return (
     <>
       <button
@@ -90,10 +140,13 @@ export default function FloatingButton() {
           }, 200);
         }}
         onClick={() => {
-          if (!didDrag.current) {
-            setMenuOpen((prev) => !prev);
-            setTab(0);
+          if (didDrag.current) {
+            didDrag.current = false;
+            return;
           }
+
+          setMenuOpen((prev) => !prev);
+          setTab(0);
         }}
       >
         <svg
