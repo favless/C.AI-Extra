@@ -1,4 +1,4 @@
-import { loadAllCharacters } from "./database";
+import { loadAllCharacters, loadCharacter, saveCharacter } from "./database";
 import type { CharacterData } from "../types/CharacterTypes";
 
 type CharacterImage = CharacterData & {
@@ -57,9 +57,25 @@ export async function getCurrentCharacter() {
     return null;
   }
 
+  const name = characterImage.alt;
+  const originalImageURL = characterImage.src;
+
+  const existingCharacter = await loadCharacter(href);
+
+  if (!existingCharacter) {
+    await saveCharacter({
+      href,
+      name,
+      images: [null, null, null, null],
+      activeImage: 0,
+      useImage: true,
+      originalImageURL,
+    });
+  }
+
   return {
     href,
-    name: characterImage.alt,
+    name,
   };
 }
 
@@ -119,11 +135,18 @@ export async function reloadImageReplacements() {
   const characters = await loadAllCharacters();
 
   characterImages = characters.map((char) => {
-    const image = char.images[char.activeImage];
+    if (char.useImage) {
+      const image = char.images[char.activeImage];
+
+      return {
+        ...char,
+        imageURL: image ? URL.createObjectURL(image) : null,
+      };
+    }
 
     return {
       ...char,
-      imageURL: image ? URL.createObjectURL(image) : null,
+      imageURL: char.originalImageURL,
     };
   });
 

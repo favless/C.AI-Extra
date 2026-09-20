@@ -12,9 +12,23 @@ export default function Menu() {
   const { tab, setCurrentCharacter, menuOpen, setMenuOpen } = useSession();
 
   useEffect(() => {
-    getCurrentCharacter().then((character) => {
+    let lastURL = location.href;
+
+    async function updateCharacter() {
+      const character = await getCurrentCharacter();
       setCurrentCharacter(character);
-    });
+    }
+
+    updateCharacter();
+
+    const interval = setInterval(() => {
+      if (location.href === lastURL) return;
+
+      lastURL = location.href;
+      updateCharacter();
+    }, 250);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (

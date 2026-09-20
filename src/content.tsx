@@ -10,6 +10,7 @@ import toolheadercss from "./css/sections/ToolHeader.module.css?inline";
 import toollistcss from "./css/sections/ToolList.module.css?inline";
 import globalcss from "./css/Global.module.css?inline";
 import imagereplacercss from "./css/sections/ImageReplacer.module.css?inline";
+import switchcss from "./css/util/Switch.module.css?inline";
 
 console.log("C.AI Extra loaded!");
 
@@ -38,6 +39,7 @@ addStyles(
   toollistcss,
   globalcss,
   imagereplacercss,
+  switchcss,
 );
 
 const theme = {

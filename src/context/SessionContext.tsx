@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import type { CurrentCharacter } from "../types/CharacterTypes";
+import { useEffect } from "react";
+import { getCurrentCharacter } from "../utils/character";
 
 type SessionContextType = {
   currentCharacter: CurrentCharacter | null;
@@ -19,6 +21,26 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     useState<CurrentCharacter | null>(null);
   const [tab, setTab] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    let lastURL = location.href;
+
+    async function updateCharacter() {
+      const character = await getCurrentCharacter();
+      setCurrentCharacter(character);
+    }
+
+    updateCharacter();
+
+    const interval = setInterval(() => {
+      if (location.href === lastURL) return;
+
+      lastURL = location.href;
+      updateCharacter();
+    }, 250);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <SessionContext.Provider

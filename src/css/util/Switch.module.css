@@ -1,0 +1,38 @@
+.switch {
+  width: 40px;
+  height: 22px;
+  padding: 3px;
+  cursor: pointer;
+  box-sizing: border-box;
+
+  background: transparent;
+  border: 2px solid var(--surface-elevation-1);
+  border-radius: 6px;
+
+  cursor: pointer;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+.switchOn {
+  /* same base styling */
+  background: var(--accent);
+}
+
+.thumb {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  transition: left 100ms ease;
+
+  position: absolute;
+  left: -4px;
+}
+
+.switchOn .thumb {
+  left: 24px;
+}

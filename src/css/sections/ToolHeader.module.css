@@ -1,8 +1,7 @@
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  align-items: flex-start;
+  gap: 10px;
 }
 
 .header span {
@@ -10,7 +9,7 @@
   color: var(--muted-foreground);
 }
 
-.header button {
+.back {
   background: transparent;
   border: 2px solid var(--surface-elevation-1);
   border-radius: 6px;
@@ -25,11 +24,11 @@
   cursor: pointer;
 }
 
-.header button svg {
+.back svg {
   height: 30px;
   width: 30px;
 }
 
-.header button svg * {
+.back svg * {
   stroke: var(--foreground);
 }

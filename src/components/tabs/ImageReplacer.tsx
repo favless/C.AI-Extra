@@ -5,15 +5,19 @@ import { loadCharacter } from "../../utils/database";
 import { useState, useEffect } from "react";
 import type { CharacterData } from "../../types/CharacterTypes";
 
-import ToolHeader from "../sections/ToolHeader";
 import ImageSlot from "../logic/ImageSlot";
+import Switch from "../util/Switch";
+
 import style from "../../css/sections/ImageReplacer.module.css";
+import global from "../../css/Global.module.css";
+import header from "../../css/sections/ToolHeader.module.css";
 
 export default function ImageReplacer() {
-  const { currentCharacter } = useSession();
+  const { currentCharacter, setTab } = useSession();
   const [character, setCharacter] = useState<CharacterData | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<number>(0);
   const [activeSlot, setActiveSlot] = useState<number>(0);
+  const [switchState, setSwitchState] = useState<boolean>(true);
   const [imageURLs, setImageURLs] = useState<(string | null)[]>([
     null,
     null,
@@ -37,13 +41,18 @@ export default function ImageReplacer() {
     });
   }, [currentCharacter]);
 
-  // HANDLE IMAGE SLOTS
+  // HANDLE IMAGE SLOTS & USEIMAGE SWITCH STATE
   useEffect(() => {
     const urls = character?.images.map((image) =>
       image ? URL.createObjectURL(image) : null,
     ) ?? [null, null, null, null];
 
     setImageURLs(urls);
+
+    // SWITCH STATE
+    if (character) {
+      setSwitchState(character?.useImage);
+    }
 
     return () => {
       urls.forEach((url) => {
@@ -69,12 +78,27 @@ export default function ImageReplacer() {
     reloadImageReplacements();
   }, [activeSlot]);
 
+  async function handleImageToggle(toggle: boolean) {
+    if (!currentCharacter || !character) return;
+
+    const newCharacter: CharacterData = {
+      ...character,
+      useImage: toggle,
+    };
+
+    await saveCharacter(newCharacter);
+    setCharacter(newCharacter);
+    reloadImageReplacements();
+
+    setSwitchState(toggle);
+  }
+
   // SELF EXPLANATORY
   async function handleImageUpload(
     event: React.ChangeEvent<HTMLInputElement>,
     slot: number,
   ) {
-    if (!currentCharacter) return;
+    if (!currentCharacter || !character) return;
 
     const file = event.target.files?.[0];
     if (!file) return;
@@ -87,7 +111,9 @@ export default function ImageReplacer() {
       href: currentCharacter.href,
       name: currentCharacter.name,
       images,
+      originalImageURL: character.originalImageURL,
       activeImage: slot,
+      useImage: character.useImage,
     };
 
     await saveCharacter(newCharacter);
@@ -101,7 +127,46 @@ export default function ImageReplacer() {
 
   return (
     <div>
-      <ToolHeader />
+      <div className={header.header}>
+        <button className={header.back} onClick={() => setTab(0)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="800px"
+            height="800px"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M19.2854 12.0002L11.2727 12.0002"
+              stroke="#000000"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M16.5101 15.6364L19.9999 12L16.5101 8.36363"
+              stroke="#000000"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M13.4545 7V4H4V20H13.4545V17"
+              stroke="#000000"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          Back
+        </button>
+        <div className={style.info}>
+          <Switch
+            checked={switchState}
+            onChange={(checked) => handleImageToggle(checked)}
+          />
+          <span>{`Character: ${currentCharacter?.name}`}</span>
+          {character?.useImage ? "" : <span>[DISABLED]</span>}
+        </div>
+      </div>
+      <div className={global.divider}></div>
       <div className={style["image-container"]}>
         <div className={style.left}>
           <ImageSlot
@@ -137,6 +202,7 @@ export default function ImageReplacer() {
             imageURLs={imageURLs}
           />
         </div>
+        <div className={style.divider}></div>
         <div className={style.right}>
           <img
             src={imageURLs[selectedSlot] ? imageURLs[selectedSlot] : undefined}
