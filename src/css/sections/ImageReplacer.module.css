@@ -99,6 +99,8 @@
   border-radius: 2px;
   overflow: hidden;
 
+  object-fit: cover;
+
   aspect-ratio: 1 / 1;
 }
 
@@ -116,6 +118,34 @@
   width: 95%;
   height: 95%;
   border-radius: 2px;
+  object-fit: cover;
+}
+
+.right button {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+
+  width: 30px;
+  height: 30px;
+
+  background: var(--background);
+  border: 2px solid var(--surface-elevation-1);
+  border-radius: 4px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+}
+
+.right button svg {
+  width: 90%;
+  height: 90%;
+}
+
+.right button svg * {
+  stroke: var(--muted-foreground);
 }
 
 .apply {

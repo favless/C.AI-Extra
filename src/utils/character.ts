@@ -43,6 +43,12 @@ function waitForCharacterLink(): Promise<HTMLAnchorElement> {
 }
 
 export async function getCurrentCharacter() {
+  const chatDetails = document.getElementById("chat-details");
+
+  if (!chatDetails) {
+    return null;
+  }
+
   const characterLink = await waitForCharacterLink();
 
   const characterImage = characterLink.querySelector<HTMLImageElement>("img");

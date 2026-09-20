@@ -78,6 +78,22 @@ export default function ImageReplacer() {
     reloadImageReplacements();
   }, [activeSlot]);
 
+  async function deleteSelectedImage() {
+    if (!currentCharacter || !character) return;
+
+    const newImages = character.images;
+    newImages[selectedSlot] = null;
+
+    const newCharacter: CharacterData = {
+      ...character,
+      images: newImages,
+    };
+
+    await saveCharacter(newCharacter);
+    setCharacter(newCharacter);
+    reloadImageReplacements();
+  }
+
   async function handleImageToggle(toggle: boolean) {
     if (!currentCharacter || !character) return;
 
@@ -208,6 +224,44 @@ export default function ImageReplacer() {
             src={imageURLs[selectedSlot] ? imageURLs[selectedSlot] : undefined}
             alt="Selected Image"
           />
+          <button onClick={deleteSelectedImage}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="800px"
+              height="800px"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M6.59999 6.90909L8.39999 20H15.6L17.4 6.90909"
+                stroke="#000000"
+              />
+              <path
+                d="M6 6.66667L18 6.66667"
+                stroke="#000000"
+                stroke-linecap="round"
+              />
+              <path
+                d="M14.5714 7V6C14.5714 4.89543 13.676 4 12.5714 4H12H11.4286C10.324 4 9.42858 4.89543 9.42858 6V7"
+                stroke="#000000"
+              />
+              <path
+                d="M11.9806 10.5463V16.3645"
+                stroke="#000000"
+                stroke-linecap="round"
+              />
+              <path
+                d="M9.60001 10.5454L10.2 16.3645"
+                stroke="#000000"
+                stroke-linecap="round"
+              />
+              <path
+                d="M14.4 10.5455L13.8 16.3646"
+                stroke="#000000"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
         </div>
       </div>
       <button
