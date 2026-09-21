@@ -5,6 +5,9 @@ export type CharacterData = {
   originalImageURL: string;
   activeImage: number;
   useImage: boolean;
+  backgrounds: (Blob | null)[];
+  activeBackground: number;
+  useBackground: boolean;
 };
 
 export type CurrentCharacter = {

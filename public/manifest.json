@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "C.AI Extra",
-  "version": "0.1.0",
+  "name": "Charrium",
+  "version": "0.1.1",
   "description": "Extra tools for Character.AI",
   "permissions": [],
   "content_scripts": [
@@ -14,5 +14,14 @@
         "content.js"
       ]
     }
-  ]
+  ],
+  "browser_specific_settings": {
+  "gecko": {
+    "id": "@charrium-tools",
+    "data_collection_permissions": {
+      "required": ["none"]
+    }
+  },
+  "gecko_android": {}
+}
 }

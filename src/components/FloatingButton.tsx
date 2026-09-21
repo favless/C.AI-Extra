@@ -2,6 +2,7 @@ import style from "../css/FloatingButton.module.css";
 import { useState, useEffect, useRef } from "react";
 import Menu from "./Menu";
 import { useSession } from "./../context/SessionContext";
+import { getCurrentCharacter } from "../utils/character";
 
 type ButtonPosition = {
   x: number;
@@ -9,7 +10,7 @@ type ButtonPosition = {
 };
 
 export default function FloatingButton() {
-  const { setTab, menuOpen, setMenuOpen } = useSession();
+  const { setTab, menuOpen, setMenuOpen, setCurrentCharacter } = useSession();
 
   const [dragging, setDragging] = useState(false);
   const dragTimer = useRef<number | null>(null);
@@ -146,6 +147,7 @@ export default function FloatingButton() {
           }
 
           setMenuOpen((prev) => !prev);
+          getCurrentCharacter().then(setCurrentCharacter);
           setTab(0);
         }}
       >

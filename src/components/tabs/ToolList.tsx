@@ -29,6 +29,21 @@ export default function ToolList() {
         Image Replacer
         {!currentCharacter && <NoCharacterLabel />}
       </button>
+      <button
+        onClick={() => {
+          if (currentCharacter) {
+            setTab(2);
+          }
+        }}
+        style={
+          currentCharacter
+            ? undefined
+            : { cursor: "not-allowed", opacity: "0.7" }
+        }
+      >
+        Custom Background
+        {!currentCharacter && <NoCharacterLabel />}
+      </button>
     </div>
   );
 }

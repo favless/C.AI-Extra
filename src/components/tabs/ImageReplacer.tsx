@@ -1,12 +1,12 @@
 import { useSession } from "../../context/SessionContext";
 import { saveCharacter } from "../../utils/database";
-import { reloadImageReplacements } from "../../utils/character";
+import { reloadImageReplacements } from "../../utils/imageReplacement";
 import { loadCharacter } from "../../utils/database";
 import { useState, useEffect } from "react";
 import type { CharacterData } from "../../types/CharacterTypes";
 
 import ImageSlot from "../logic/ImageSlot";
-import Switch from "../util/Switch";
+import Switch from "../modules/Switch";
 
 import style from "../../css/sections/ImageReplacer.module.css";
 import global from "../../css/Global.module.css";
@@ -124,12 +124,9 @@ export default function ImageReplacer() {
     images[slot] = file;
 
     const newCharacter: CharacterData = {
-      href: currentCharacter.href,
-      name: currentCharacter.name,
+      ...character,
       images,
-      originalImageURL: character.originalImageURL,
       activeImage: slot,
-      useImage: character.useImage,
     };
 
     await saveCharacter(newCharacter);

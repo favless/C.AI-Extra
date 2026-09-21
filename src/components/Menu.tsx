@@ -7,6 +7,7 @@ import { getCurrentCharacter } from "../utils/character";
 import { useSession } from "./../context/SessionContext";
 
 import ImageReplacer from "./tabs/ImageReplacer";
+import CustomBackground from "./tabs/CustomBackground";
 
 export default function Menu() {
   const { tab, setCurrentCharacter, menuOpen, setMenuOpen } = useSession();
@@ -48,6 +49,7 @@ export default function Menu() {
           <h2>
             {tab === 0 && "Charrium"}
             {tab === 1 && "Image Replacer"}
+            {tab === 2 && "Custom Background"}
           </h2>
           <button className={style.close} onClick={() => setMenuOpen(false)}>
             <svg
@@ -71,6 +73,7 @@ export default function Menu() {
         <div>
           {tab === 0 && <ToolList />}
           {tab === 1 && <ImageReplacer />}
+          {tab === 2 && <CustomBackground />}
         </div>
       </div>
     </div>

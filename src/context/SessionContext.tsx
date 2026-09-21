@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import type { CurrentCharacter } from "../types/CharacterTypes";
-import { useEffect } from "react";
 import { getCurrentCharacter } from "../utils/character";
+import { createBackground, updateBackground } from "../utils/background";
 
 type SessionContextType = {
   currentCharacter: CurrentCharacter | null;
@@ -23,6 +23,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
+    createBackground();
     let lastURL = location.href;
 
     async function updateCharacter() {
@@ -41,6 +42,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    updateBackground(currentCharacter);
+  }, [currentCharacter]);
 
   return (
     <SessionContext.Provider

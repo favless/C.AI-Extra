@@ -1,4 +1,4 @@
-import style from "../../css/util/Switch.module.css";
+import style from "../../css/modules/Switch.module.css";
 
 type SwitchProps = {
   checked: boolean;

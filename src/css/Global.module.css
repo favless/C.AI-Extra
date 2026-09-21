@@ -1,6 +1,12 @@
 .divider {
-  width: 90%;
+  width: 100%;
   height: 1px;
   background-color: var(--border-divider);
   margin: 10px 0px;
+}
+
+.verticalflex {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }

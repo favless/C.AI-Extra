@@ -1,18 +1,11 @@
-import { loadAllCharacters, loadCharacter, saveCharacter } from "./database";
-import type { CharacterData } from "../types/CharacterTypes";
-
-type CharacterImage = CharacterData & {
-  imageURL: string | null;
-};
+import { loadCharacter, saveCharacter } from "./database";
 
 function waitForCharacterLink(): Promise<HTMLAnchorElement> {
   return new Promise((resolve) => {
     const findCharacterLink = () => {
       const chatDetails = document.getElementById("chat-details");
 
-      if (!chatDetails) {
-        return null;
-      }
+      if (!chatDetails) return null;
 
       return chatDetails.querySelector<HTMLAnchorElement>(
         'a[href^="/character/"]',
@@ -29,10 +22,10 @@ function waitForCharacterLink(): Promise<HTMLAnchorElement> {
     const observer = new MutationObserver(() => {
       const characterLink = findCharacterLink();
 
-      if (characterLink) {
-        observer.disconnect();
-        resolve(characterLink);
-      }
+      if (!characterLink) return;
+
+      observer.disconnect();
+      resolve(characterLink);
     });
 
     observer.observe(document.body, {
@@ -43,9 +36,7 @@ function waitForCharacterLink(): Promise<HTMLAnchorElement> {
 }
 
 export async function getCurrentCharacter() {
-  const chatDetails = document.getElementById("chat-details");
-
-  if (!chatDetails) {
+  if (!location.pathname.startsWith("/chat/")) {
     return null;
   }
 
@@ -53,15 +44,11 @@ export async function getCurrentCharacter() {
 
   const characterImage = characterLink.querySelector<HTMLImageElement>("img");
 
-  if (!characterImage) {
-    return null;
-  }
+  if (!characterImage) return null;
 
   const href = characterLink.getAttribute("href");
 
-  if (!href) {
-    return null;
-  }
+  if (!href) return null;
 
   const name = characterImage.alt;
   const originalImageURL = characterImage.src;
@@ -76,6 +63,9 @@ export async function getCurrentCharacter() {
       activeImage: 0,
       useImage: true,
       originalImageURL,
+      backgrounds: [null, null, null, null],
+      activeBackground: 0,
+      useBackground: true,
     });
   }
 
@@ -83,78 +73,4 @@ export async function getCurrentCharacter() {
     href,
     name,
   };
-}
-
-function replaceImages() {
-  const images = document.querySelectorAll<HTMLImageElement>("img");
-
-  images.forEach((img) => {
-    characterImages.forEach((char) => {
-      if ((img.alt === char.name || img.title === char.name) && char.imageURL) {
-        img.src = char.imageURL;
-      }
-    });
-  });
-}
-
-let characterImages: CharacterImage[] = [];
-
-let imageObserver: MutationObserver | null = null;
-
-export async function startImageReplacement() {
-  if (imageObserver) {
-    return;
-  }
-
-  await reloadImageReplacements();
-
-  imageObserver = new MutationObserver(() => {
-    replaceImages();
-  });
-
-  imageObserver.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
-}
-
-export function stopImageReplacement() {
-  imageObserver?.disconnect();
-  imageObserver = null;
-
-  for (const character of characterImages) {
-    if (character.imageURL) {
-      URL.revokeObjectURL(character.imageURL);
-    }
-  }
-
-  characterImages = [];
-}
-
-export async function reloadImageReplacements() {
-  for (const character of characterImages) {
-    if (character.imageURL) {
-      URL.revokeObjectURL(character.imageURL);
-    }
-  }
-
-  const characters = await loadAllCharacters();
-
-  characterImages = characters.map((char) => {
-    if (char.useImage) {
-      const image = char.images[char.activeImage];
-
-      return {
-        ...char,
-        imageURL: image ? URL.createObjectURL(image) : null,
-      };
-    }
-
-    return {
-      ...char,
-      imageURL: char.originalImageURL,
-    };
-  });
-
-  replaceImages();
 }
