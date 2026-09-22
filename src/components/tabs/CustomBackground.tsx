@@ -5,7 +5,6 @@ import header from "../../css/sections/ToolHeader.module.css";
 import global from "../../css/Global.module.css";
 
 import { loadCharacter, saveCharacter } from "../../utils/database";
-import { reloadImageReplacements } from "../../utils/imageReplacement";
 import type { CharacterData } from "../../types/CharacterTypes";
 
 import Switch from "../modules/Switch";
@@ -38,19 +37,22 @@ export default function CustomBackground() {
 
   // HANDLE ACTIVE BACKGROUND CHANGE
   useEffect(() => {
-    if (!character) return;
+    if (!character || !currentCharacter) return;
 
-    if (character.activeImage === activeSlot) return;
+    if (character.activeBackground === activeSlot) return;
 
     const newCharacter = {
       ...character,
       activeBackground: activeSlot,
     };
 
-    saveCharacter(newCharacter);
-    setCharacter(newCharacter);
+    async function update() {
+      await saveCharacter(newCharacter);
+      setCharacter(newCharacter);
+      await updateBackground(currentCharacter);
+    }
 
-    updateBackground(currentCharacter);
+    update();
   }, [activeSlot]);
 
   // HANDLE BACKGROUND SLOTS & USEBACKGROUND SWITCH STATE
@@ -83,7 +85,7 @@ export default function CustomBackground() {
 
     await saveCharacter(newCharacter);
     setCharacter(newCharacter);
-    reloadImageReplacements();
+    await updateBackground(currentCharacter);
 
     setSwitchState(toggle);
   }
@@ -113,7 +115,7 @@ export default function CustomBackground() {
 
     setCharacter(newCharacter);
 
-    updateBackground(currentCharacter);
+    await updateBackground(currentCharacter);
 
     console.log(`Image saved to slot ${selectedSlot}!`);
   }
@@ -202,7 +204,7 @@ export default function CustomBackground() {
           </svg>
           Back
         </button>
-        <div className={style.info}>
+        <div className={header.info}>
           <Switch
             checked={switchState}
             onChange={(checked) => handleBackgroundToggle(checked)}
@@ -226,9 +228,11 @@ export default function CustomBackground() {
         >{`>`}</button>
       </div>
       <button
-        className={`${style.apply} ${selectedSlot == character?.activeBackground ? style.cantapply : ""}`}
+        className={`${style.apply} ${selectedSlot == character?.activeBackground || !backgroundURLs[selectedSlot] ? style.cantapply : ""}`}
         onClick={() => {
-          setActiveSlot(selectedSlot);
+          backgroundURLs[selectedSlot]
+            ? setActiveSlot(selectedSlot)
+            : undefined;
         }}
       >
         {selectedSlot == character?.activeBackground

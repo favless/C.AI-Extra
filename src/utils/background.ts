@@ -6,6 +6,8 @@ let backgroundElement: HTMLImageElement | null = null;
 let backgroundURL: string | null = null;
 
 export function createBackground() {
+  if (backgroundElement) return;
+
   const chatBody = document.querySelector<HTMLElement>("#chat-body");
 
   if (!chatBody) return;
@@ -25,6 +27,10 @@ export function createBackground() {
 export async function updateBackground(
   currentCharacter: CurrentCharacter | null,
 ) {
+  if (!backgroundElement) {
+    createBackground();
+  }
+
   if (!backgroundElement) return;
 
   if (backgroundURL) {

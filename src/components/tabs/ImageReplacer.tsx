@@ -170,7 +170,7 @@ export default function ImageReplacer() {
           </svg>
           Back
         </button>
-        <div className={style.info}>
+        <div className={header.info}>
           <Switch
             checked={switchState}
             onChange={(checked) => handleImageToggle(checked)}

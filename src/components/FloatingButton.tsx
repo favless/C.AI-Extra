@@ -72,9 +72,9 @@ export default function FloatingButton() {
     };
   }, []);
 
-  // MOUSE UP HANDLER
+  // POINTER UP HANDLER
   useEffect(() => {
-    const handleMouseUp = () => {
+    const handlePointerUp = () => {
       if (dragTimer.current !== null) {
         clearTimeout(dragTimer.current);
         dragTimer.current = null;
@@ -91,10 +91,10 @@ export default function FloatingButton() {
       setDragging(false);
     };
 
-    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("pointerup", handlePointerUp);
 
     return () => {
-      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("pointerup", handlePointerUp);
     };
   }, []);
 
@@ -104,7 +104,7 @@ export default function FloatingButton() {
       return;
     }
 
-    const handleMouseMove = (event: MouseEvent) => {
+    const handlePointerMove = (event: PointerEvent) => {
       updatePosition(
         clampPosition({
           x: event.clientX - dragOffset.current.x,
@@ -113,10 +113,10 @@ export default function FloatingButton() {
       );
     };
 
-    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("pointermove", handlePointerMove);
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("pointermove", handlePointerMove);
     };
   }, [dragging]);
 
@@ -127,8 +127,9 @@ export default function FloatingButton() {
       <button
         className={style.button}
         style={{ left: position.x, top: position.y }}
-        onMouseDown={(event) => {
+        onPointerDown={(event) => {
           didDrag.current = false;
+
           dragTimer.current = window.setTimeout(() => {
             didDrag.current = true;
             setDragging(true);
