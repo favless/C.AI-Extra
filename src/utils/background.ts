@@ -38,7 +38,7 @@ export async function updateBackground(
     return;
   }
 
-  const character = await loadCharacter(currentCharacter.href);
+  const character = await loadCharacter(currentCharacter.chatPath);
 
   if (!character || !character.useBackground) {
     backgroundElement.src = "";

@@ -1,18 +1,16 @@
 import { loadCharacter, saveCharacter } from "./database";
 
-function waitForCharacterLink(): Promise<HTMLAnchorElement> {
+function waitForCharacterImage(): Promise<HTMLImageElement> {
   return new Promise((resolve) => {
-    const findCharacterLink = () => {
+    const findCharacterImage = () => {
       const chatDetails = document.getElementById("chat-details");
 
       if (!chatDetails) return null;
 
-      return chatDetails.querySelector<HTMLAnchorElement>(
-        'a[href^="/character/"]',
-      );
+      return chatDetails.querySelector<HTMLImageElement>("img");
     };
 
-    const existing = findCharacterLink();
+    const existing = findCharacterImage();
 
     if (existing) {
       resolve(existing);
@@ -20,12 +18,12 @@ function waitForCharacterLink(): Promise<HTMLAnchorElement> {
     }
 
     const observer = new MutationObserver(() => {
-      const characterLink = findCharacterLink();
+      const characterImage = findCharacterImage();
 
-      if (!characterLink) return;
+      if (!characterImage) return;
 
       observer.disconnect();
-      resolve(characterLink);
+      resolve(characterImage);
     });
 
     observer.observe(document.body, {
@@ -40,24 +38,18 @@ export async function getCurrentCharacter() {
     return null;
   }
 
-  const characterLink = await waitForCharacterLink();
+  const chatPath = location.pathname;
 
-  const characterImage = characterLink.querySelector<HTMLImageElement>("img");
-
-  if (!characterImage) return null;
-
-  const href = characterLink.getAttribute("href");
-
-  if (!href) return null;
+  const characterImage = await waitForCharacterImage();
 
   const name = characterImage.alt;
   const originalImageURL = characterImage.src;
 
-  const existingCharacter = await loadCharacter(href);
+  const existingCharacter = await loadCharacter(chatPath);
 
   if (!existingCharacter) {
     await saveCharacter({
-      href,
+      chatPath,
       name,
       images: [null, null, null, null],
       activeImage: 0,
@@ -70,7 +62,7 @@ export async function getCurrentCharacter() {
   }
 
   return {
-    href,
+    chatPath,
     name,
   };
 }

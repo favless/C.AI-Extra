@@ -32,7 +32,7 @@ export default function ImageReplacer() {
       return;
     }
 
-    loadCharacter(currentCharacter.href).then((character) => {
+    loadCharacter(currentCharacter.chatPath).then((character) => {
       setCharacter(character);
 
       if (character) {

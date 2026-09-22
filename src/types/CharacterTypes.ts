@@ -1,5 +1,5 @@
 export type CharacterData = {
-  href: string;
+  chatPath: string;
   name: string;
   images: (Blob | null)[];
   originalImageURL: string;
@@ -11,6 +11,6 @@ export type CharacterData = {
 };
 
 export type CurrentCharacter = {
-  href: string;
+  chatPath: string;
   name: string;
 };

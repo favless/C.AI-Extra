@@ -12,7 +12,7 @@ export function openDatabase(): Promise<IDBDatabase> {
       const db = request.result;
 
       db.createObjectStore(STORE_NAME, {
-        keyPath: "href",
+        keyPath: "chatPath",
       });
     };
 
@@ -46,7 +46,7 @@ export async function saveCharacter(character: CharacterData) {
 }
 
 export async function loadCharacter(
-  href: string,
+  chatPath: string,
 ): Promise<CharacterData | null> {
   const db = await openDatabase();
 
@@ -54,7 +54,7 @@ export async function loadCharacter(
     const transaction = db.transaction(STORE_NAME, "readonly");
     const store = transaction.objectStore(STORE_NAME);
 
-    const request = store.get(href);
+    const request = store.get(chatPath);
 
     request.onsuccess = () => {
       resolve(request.result ?? null);

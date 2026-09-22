@@ -1,36 +1,13 @@
 import style from "../css/Menu.module.css";
 import global from "../css/Global.module.css";
 import ToolList from "./tabs/ToolList";
-
-import { useEffect } from "react";
-import { getCurrentCharacter } from "../utils/character";
 import { useSession } from "./../context/SessionContext";
 
 import ImageReplacer from "./tabs/ImageReplacer";
 import CustomBackground from "./tabs/CustomBackground";
 
 export default function Menu() {
-  const { tab, setCurrentCharacter, menuOpen, setMenuOpen } = useSession();
-
-  useEffect(() => {
-    let lastURL = location.href;
-
-    async function updateCharacter() {
-      const character = await getCurrentCharacter();
-      setCurrentCharacter(character);
-    }
-
-    updateCharacter();
-
-    const interval = setInterval(() => {
-      if (location.href === lastURL) return;
-
-      lastURL = location.href;
-      updateCharacter();
-    }, 250);
-
-    return () => clearInterval(interval);
-  }, []);
+  const { tab, menuOpen, setMenuOpen } = useSession();
 
   return (
     <div

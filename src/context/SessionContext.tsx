@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import type { CurrentCharacter } from "../types/CharacterTypes";
 import { getCurrentCharacter } from "../utils/character";
 import { createBackground, updateBackground } from "../utils/background";
+import { reloadImageReplacements } from "../utils/imageReplacement";
 
 type SessionContextType = {
   currentCharacter: CurrentCharacter | null;
@@ -19,16 +20,21 @@ const SessionContext = createContext<SessionContextType | null>(null);
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [currentCharacter, setCurrentCharacter] =
     useState<CurrentCharacter | null>(null);
+
   const [tab, setTab] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     createBackground();
+
     let lastURL = location.href;
 
     async function updateCharacter() {
       const character = await getCurrentCharacter();
+
       setCurrentCharacter(character);
+
+      await reloadImageReplacements();
     }
 
     updateCharacter();

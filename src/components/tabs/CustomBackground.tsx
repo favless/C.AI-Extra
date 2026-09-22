@@ -31,7 +31,7 @@ export default function CustomBackground() {
       return;
     }
 
-    loadCharacter(currentCharacter.href).then((character) => {
+    loadCharacter(currentCharacter.chatPath).then((character) => {
       setCharacter(character);
     });
   }, [currentCharacter]);
