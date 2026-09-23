@@ -24,3 +24,12 @@
 .warning {
   color: var(--muted-foreground);
 }
+
+.list button svg {
+  height: 40px;
+  width: 40px;
+}
+
+.list button svg * {
+  stroke: var(--muted-foreground);
+}

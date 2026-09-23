@@ -25,7 +25,7 @@ export default function Menu() {
         <div className={style.header}>
           <h2>
             {tab === 0 && "Charrium"}
-            {tab === 1 && "Image Replacer"}
+            {tab === 1 && "Icon Replacer"}
             {tab === 2 && "Custom Background"}
           </h2>
           <button className={style.close} onClick={() => setMenuOpen(false)}>
