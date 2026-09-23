@@ -63,4 +63,5 @@ export async function updateBackground(
   backgroundURL = URL.createObjectURL(background);
   backgroundElement.src = backgroundURL;
   backgroundElement.style.display = "block";
+  backgroundElement.style.opacity = String(character.backgroundOpacity / 100);
 }

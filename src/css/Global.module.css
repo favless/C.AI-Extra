@@ -10,3 +10,32 @@
   align-items: center;
   flex-direction: column;
 }
+
+.slider {
+  appearance: none;
+  width: 70%;
+  height: 4px;
+  background: var(--surface-elevation-1);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+/* Chrome / Edge / Firefox */
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--foreground);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: var(--foreground);
+  cursor: pointer;
+}

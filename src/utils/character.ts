@@ -58,6 +58,7 @@ export async function getCurrentCharacter() {
       backgrounds: [null, null, null, null],
       activeBackground: 0,
       useBackground: true,
+      backgroundOpacity: 100,
     });
   }
 

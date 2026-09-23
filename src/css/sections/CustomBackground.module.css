@@ -7,7 +7,7 @@
   grid-template-rows: 300px;
 }
 
-.bg-container button {
+.bg-container > button {
   height: 100%;
   width: 100%;
   background: transparent;
@@ -78,4 +78,37 @@
 
 .empty input {
   display: none;
+}
+
+.mid {
+  position: relative;
+}
+
+.delete {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+
+  width: 40px;
+  height: 40px;
+
+  background: var(--background);
+  border: 2px solid var(--surface-elevation-1);
+  border-radius: 4px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+
+  cursor: pointer;
+}
+
+.delete svg {
+  width: 90%;
+  height: 90%;
+}
+
+.delete svg * {
+  stroke: var(--muted-foreground);
 }

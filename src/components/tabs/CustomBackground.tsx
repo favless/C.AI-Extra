@@ -120,6 +120,36 @@ export default function CustomBackground() {
     console.log(`Image saved to slot ${selectedSlot}!`);
   }
 
+  async function handleBackgroundOpacity(opacity: number) {
+    if (!character || !currentCharacter) return;
+
+    const newCharacter: CharacterData = {
+      ...character,
+      backgroundOpacity: opacity,
+    };
+
+    await saveCharacter(newCharacter);
+    setCharacter(newCharacter);
+
+    await updateBackground(currentCharacter);
+  }
+
+  async function deleteSelectedBackground() {
+    if (!currentCharacter || !character) return;
+
+    const newBackgrounds = character.backgrounds;
+    newBackgrounds[selectedSlot] = null;
+
+    const newCharacter: CharacterData = {
+      ...character,
+      backgrounds: newBackgrounds,
+    };
+
+    await saveCharacter(newCharacter);
+    setCharacter(newCharacter);
+    await updateBackground(currentCharacter);
+  }
+
   function UploadedSlot() {
     return (
       <img
@@ -220,13 +250,67 @@ export default function CustomBackground() {
             selectedSlot > 0 ? setSelectedSlot(selectedSlot - 1) : undefined
           }
         >{`<`}</button>
-        {backgroundURLs[selectedSlot] ? <UploadedSlot /> : <EmptySlot />}
+        <div className={style.mid}>
+          {backgroundURLs[selectedSlot] ? <UploadedSlot /> : <EmptySlot />}
+          <button
+            className={style.delete}
+            onClick={() => deleteSelectedBackground()}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="800px"
+              height="800px"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M6.59999 6.90909L8.39999 20H15.6L17.4 6.90909"
+                stroke="#000000"
+              />
+              <path
+                d="M6 6.66667L18 6.66667"
+                stroke="#000000"
+                stroke-linecap="round"
+              />
+              <path
+                d="M14.5714 7V6C14.5714 4.89543 13.676 4 12.5714 4H12H11.4286C10.324 4 9.42858 4.89543 9.42858 6V7"
+                stroke="#000000"
+              />
+              <path
+                d="M11.9806 10.5463V16.3645"
+                stroke="#000000"
+                stroke-linecap="round"
+              />
+              <path
+                d="M9.60001 10.5454L10.2 16.3645"
+                stroke="#000000"
+                stroke-linecap="round"
+              />
+              <path
+                d="M14.4 10.5455L13.8 16.3646"
+                stroke="#000000"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
         <button
           onClick={() =>
             selectedSlot < 3 ? setSelectedSlot(selectedSlot + 1) : undefined
           }
         >{`>`}</button>
       </div>
+      <span>{`Opacity: ${character?.backgroundOpacity ?? 100}%`}</span>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        className={global.slider}
+        value={character?.backgroundOpacity ?? 100}
+        onChange={(event) =>
+          handleBackgroundOpacity(Number(event.target.value))
+        }
+      />
       <button
         className={`${style.apply} ${selectedSlot == character?.activeBackground || !backgroundURLs[selectedSlot] ? style.cantapply : ""}`}
         onClick={() => {

@@ -8,6 +8,7 @@ export type CharacterData = {
   backgrounds: (Blob | null)[];
   activeBackground: number;
   useBackground: boolean;
+  backgroundOpacity: number;
 };
 
 export type CurrentCharacter = {
