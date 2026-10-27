@@ -32,11 +32,16 @@ export default function ImageReplacer() {
       return;
     }
 
-    loadCharacter(currentCharacter.chatPath).then((character) => {
-      setCharacter(character);
+    setCharacter(null);
+    setActiveSlot(0);
+    setSelectedSlot(0);
 
-      if (character) {
-        setActiveSlot(character.activeImage);
+    loadCharacter(currentCharacter.chatPath).then((loadedCharacter) => {
+      setCharacter(loadedCharacter);
+
+      if (loadedCharacter) {
+        setActiveSlot(loadedCharacter.activeImage);
+        setSelectedSlot(loadedCharacter.activeImage);
       }
     });
   }, [currentCharacter]);
@@ -67,21 +72,24 @@ export default function ImageReplacer() {
 
     if (character.activeImage === activeSlot) return;
 
-    const newCharacter = {
+    const newCharacter: CharacterData = {
       ...character,
       activeImage: activeSlot,
     };
 
-    saveCharacter(newCharacter);
-    setCharacter(newCharacter);
+    async function update() {
+      await saveCharacter(newCharacter);
+      setCharacter(newCharacter);
+      await reloadImageReplacements();
+    }
 
-    reloadImageReplacements();
-  }, [activeSlot]);
+    void update();
+  }, [activeSlot, character]);
 
   async function deleteSelectedImage() {
     if (!currentCharacter || !character) return;
 
-    const newImages = character.images;
+    const newImages = [...character.images];
     newImages[selectedSlot] = null;
 
     const newCharacter: CharacterData = {
@@ -116,7 +124,10 @@ export default function ImageReplacer() {
   ) {
     if (!currentCharacter || !character) return;
 
-    const file = event.target.files?.[0];
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    input.value = "";
+
     if (!file) return;
 
     const images = character ? [...character.images] : [null, null, null, null];
@@ -132,8 +143,10 @@ export default function ImageReplacer() {
     await saveCharacter(newCharacter);
 
     setCharacter(newCharacter);
+    setActiveSlot(slot);
+    setSelectedSlot(slot);
 
-    reloadImageReplacements();
+    await reloadImageReplacements();
 
     console.log(`Image saved to slot ${slot}!`);
   }

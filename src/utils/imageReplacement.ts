@@ -16,11 +16,12 @@ function getCharacterMap() {
 }
 
 function replaceImage(img: HTMLImageElement, character: CharacterImage) {
-  if (!character.imageURL) return;
+  const targetURL = character.imageURL || character.originalImageURL;
 
-  if (img.src === character.imageURL) return;
+  if (!targetURL) return;
+  if (img.src === targetURL) return;
 
-  img.src = character.imageURL;
+  img.src = targetURL;
 }
 
 // Replace a single image based on its surrounding /chat/ link
@@ -165,7 +166,9 @@ export async function reloadImageReplacements() {
 
       return {
         ...character,
-        imageURL: image ? URL.createObjectURL(image) : null,
+        imageURL: image
+          ? URL.createObjectURL(image)
+          : character.originalImageURL,
       };
     }
 

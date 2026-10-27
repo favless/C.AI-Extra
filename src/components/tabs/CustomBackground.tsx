@@ -30,8 +30,13 @@ export default function CustomBackground() {
       return;
     }
 
-    loadCharacter(currentCharacter.chatPath).then((character) => {
-      setCharacter(character);
+    loadCharacter(currentCharacter.chatPath).then((loadedCharacter) => {
+      setCharacter(loadedCharacter);
+
+      const savedActiveSlot = loadedCharacter?.activeBackground ?? 0;
+
+      setActiveSlot(savedActiveSlot);
+      setSelectedSlot(savedActiveSlot);
     });
   }, [currentCharacter]);
 
@@ -96,7 +101,10 @@ export default function CustomBackground() {
   ) {
     if (!currentCharacter || !character) return;
 
-    const file = event.target.files?.[0];
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    input.value = "";
+
     if (!file) return;
 
     const backgrounds = character
@@ -114,6 +122,7 @@ export default function CustomBackground() {
     await saveCharacter(newCharacter);
 
     setCharacter(newCharacter);
+    setActiveSlot(selectedSlot);
 
     await updateBackground(currentCharacter);
 
@@ -137,7 +146,7 @@ export default function CustomBackground() {
   async function deleteSelectedBackground() {
     if (!currentCharacter || !character) return;
 
-    const newBackgrounds = character.backgrounds;
+    const newBackgrounds = [...character.backgrounds];
     newBackgrounds[selectedSlot] = null;
 
     const newCharacter: CharacterData = {
