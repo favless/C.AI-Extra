@@ -28,22 +28,40 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     createBackground();
 
     let lastURL = location.href;
+    let lastCharacterName: string | undefined;
+    let updateId = 0;
 
     async function updateCharacter() {
-      const character = await getCurrentCharacter();
+      const thisUpdateId = ++updateId;
+      const requestedPath = location.pathname;
+      void updateBackground(null);
 
+      const character = await getCurrentCharacter(lastCharacterName);
+
+      // Ignore results from older navigation requests.
+      if (thisUpdateId !== updateId) return;
+
+      // Ignore results if the user navigated somewhere else while loading.
+      if (location.pathname !== requestedPath) return;
+
+      lastCharacterName = character?.name;
       setCurrentCharacter(character);
 
       await reloadImageReplacements();
+
+      // Only the latest navigation should trigger the background update.
+      if (thisUpdateId !== updateId) return;
+
+      await updateBackground(character);
     }
 
-    updateCharacter();
+    void updateCharacter();
 
     const interval = setInterval(() => {
       if (location.href === lastURL) return;
 
       lastURL = location.href;
-      updateCharacter();
+      void updateCharacter();
     }, 250);
 
     return () => clearInterval(interval);

@@ -25,12 +25,18 @@ export default function CustomBackground() {
 
   // HANDLE SELECTED CHARACTER
   useEffect(() => {
+    let cancelled = false;
+
     if (!currentCharacter) {
       setCharacter(null);
       return;
     }
 
+    setCharacter(null);
+
     loadCharacter(currentCharacter.chatPath).then((loadedCharacter) => {
+      if (cancelled) return;
+
       setCharacter(loadedCharacter);
 
       const savedActiveSlot = loadedCharacter?.activeBackground ?? 0;
@@ -38,6 +44,10 @@ export default function CustomBackground() {
       setActiveSlot(savedActiveSlot);
       setSelectedSlot(savedActiveSlot);
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [currentCharacter]);
 
   // HANDLE ACTIVE BACKGROUND CHANGE

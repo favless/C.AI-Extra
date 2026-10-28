@@ -27,6 +27,8 @@ export default function ImageReplacer() {
 
   // HANDLE SELECTED CHARACTER
   useEffect(() => {
+    let cancelled = false;
+
     if (!currentCharacter) {
       setCharacter(null);
       return;
@@ -37,6 +39,8 @@ export default function ImageReplacer() {
     setSelectedSlot(0);
 
     loadCharacter(currentCharacter.chatPath).then((loadedCharacter) => {
+      if (cancelled) return;
+
       setCharacter(loadedCharacter);
 
       if (loadedCharacter) {
@@ -44,6 +48,10 @@ export default function ImageReplacer() {
         setSelectedSlot(loadedCharacter.activeImage);
       }
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [currentCharacter]);
 
   // HANDLE IMAGE SLOTS & USEIMAGE SWITCH STATE

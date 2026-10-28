@@ -16,12 +16,34 @@ function getCharacterMap() {
 }
 
 function replaceImage(img: HTMLImageElement, character: CharacterImage) {
-  const targetURL = character.imageURL || character.originalImageURL;
+  const targetURL = character.imageURL;
 
-  if (!targetURL) return;
-  if (img.src === targetURL) return;
+  const appliedURL = img.dataset.charriumAppliedSrc;
+  const originalURL = img.dataset.charriumOriginalSrc;
 
-  img.src = targetURL;
+  // No custom image is active: restore the site's original image.
+  if (!targetURL) {
+    if (appliedURL && img.src === appliedURL && originalURL) {
+      img.src = originalURL;
+    }
+
+    delete img.dataset.charriumAppliedSrc;
+    delete img.dataset.charriumOriginalSrc;
+    return;
+  }
+
+  // Preserve the site's current image before applying our replacement.
+  // If the site changed the image since our last replacement, capture
+  // that newer image instead of keeping an outdated URL.
+  if (!appliedURL || img.src !== appliedURL) {
+    img.dataset.charriumOriginalSrc = img.src;
+  }
+
+  if (img.src !== targetURL) {
+    img.src = targetURL;
+  }
+
+  img.dataset.charriumAppliedSrc = targetURL;
 }
 
 // Replace a single image based on its surrounding /chat/ link
@@ -161,20 +183,11 @@ export async function reloadImageReplacements() {
   const characters = await loadAllCharacters();
 
   characterImages = characters.map((character) => {
-    if (character.useImage) {
-      const image = character.images[character.activeImage];
-
-      return {
-        ...character,
-        imageURL: image
-          ? URL.createObjectURL(image)
-          : character.originalImageURL,
-      };
-    }
+    const image = character.images[character.activeImage];
 
     return {
       ...character,
-      imageURL: character.originalImageURL,
+      imageURL: character.useImage && image ? URL.createObjectURL(image) : null,
     };
   });
 
